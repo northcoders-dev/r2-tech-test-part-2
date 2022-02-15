@@ -4,7 +4,6 @@
 
 - Node
 - npm
-- A good heart
 
 ## Getting Started
 
