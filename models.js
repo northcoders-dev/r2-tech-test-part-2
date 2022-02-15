@@ -17,7 +17,7 @@ exports.selectRecipeById = (id) => {
     const selectedRecipe = recipes.filter((recipe) => {
       return recipe.id === id;
     });
-    return selectedRecipe[0];
+    return selectedRecipe[0] ?? null;
   });
 };
 

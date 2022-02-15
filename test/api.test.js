@@ -50,9 +50,64 @@ describe("GET /api/recipes/:id", () => {
         expect(res.body.recipe.id).toBe("recipe-59");
       });
   });
+
+  test("should return 404 if not found", () => {
+    return request.get("/api/recipes/this-id-does-not-exist").expect(404);
+  });
 });
 
 describe("POST /api/recipes", () => {
+  test("should return 400 if bad request", async () => {
+    const requestBody = {
+      imageUrl: "http://www.images.com/18",
+      instructions:
+        "60 seconds on the highest setting your blender has, or until a smooth paste has formed",
+      ingredients: [
+        { name: "demerara sugar", grams: 25 },
+        { name: "flax", grams: 66 },
+        { name: "apple juice", grams: 44 },
+        { name: "oat milk", grams: 198 },
+      ],
+    };
+
+    await request
+      .post("/api/recipes")
+      .send({
+        ...requestBody,
+        imageUrl: null,
+      })
+      .expect(400);
+
+    await request
+      .post("/api/recipes")
+      .send({
+        ...requestBody,
+        instructions: 444444,
+      })
+      .expect(400);
+
+    await request
+      .post("/api/recipes")
+      .send({
+        ...requestBody,
+        ingredients: false,
+      })
+      .expect(400);
+
+    await request
+      .post("/api/recipes")
+      .send({
+        ...requestBody,
+        ingredients: [
+          { name: "demerara sugar", grams: 25 },
+          { name: "flax", grams: null },
+          { name: "apple juice", grams: 44 },
+          { name: "oat milk", grams: 198 },
+        ],
+      })
+      .expect(400);
+  });
+
   test("should add recipe to the database", () => {
     return request
       .post("/api/recipes")
